@@ -15,7 +15,8 @@ pipeline {
 
         stage('Create .env') {
             steps {
-                writeFile file: '.env', text: "OPENAI_API_KEY=${API_KEY}"
+                writeFile file: '.env', text: "OPENAI_API_KEY=".toString() + API_KEY
+
             }
         }
 
