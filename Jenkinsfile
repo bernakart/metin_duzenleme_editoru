@@ -6,11 +6,12 @@ pipeline {
         API_KEY = credentials('OPENAI_API_KEY')
     }
 
-  stage('Checkout') {
-    steps {
-        git branch: 'main', url: 'https://github.com/bernakart/metin_duzenleme_editoru.git'
-    }
-}
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/bernakart/metin_duzenleme_editoru.git'
+            }
+        }
 
         stage('Create .env') {
             steps {
