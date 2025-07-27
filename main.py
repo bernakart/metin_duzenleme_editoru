@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from prompt import create_prompt
 
-sistem_prompt = create_prompt(dil_mesajlari, tarz_mesajlari, dil, tarz, baslik, ozet)
-
 # .env dosyasını yükle
 load_dotenv()
 default_api_key = os.getenv("OPENAI_API_KEY")
@@ -20,13 +18,10 @@ if use_custom_key:
 else:
     api_key = default_api_key
 
-# OpenAI client oluştur
 client = OpenAI(api_key=api_key) if api_key else None
 
-# Metin girişi
 metin = st.text_area("✍️ Metni Giriniz:", height=200)
 
-# Yazı tarzı ve dil seçenekleri
 tarz_mesajlari = {
     "kurumsal": "Metni profesyonel ve resmi algılanan bir dil ile yeniden yaz.",
     "akademik": "Metni akademik, tarafsız ve bilimsel bir dille yeniden yaz.",
@@ -34,7 +29,6 @@ tarz_mesajlari = {
     "mail": "Metni düzgün, resmi ve etkili bir e-posta haline getir.",
     "hicbiri": "Metni olduğu gibi koru, yalnızca çeviri, başlık ve özet işlemleri yap."
 }
-
 dil_mesajlari = {
     "türkce": "Metni Türkçe olarak sun.",
     "ingilizce": "Metni İngilizce olarak sun.",
@@ -57,18 +51,12 @@ if st.button("✅ Metni Düzenle"):
     elif dil == "SEÇİNİZ":
         st.warning("Lütfen bir hedef dil seçiniz.")
     else:
-        sistem_prompt = "Sen profesyonel bir yazı editörüsün. "
-        sistem_prompt += dil_mesajlari[dil] + " " + tarz_mesajlari.get(tarz)
-        if baslik:
-            sistem_prompt += " Metne uygun etkileyici bir başlık oluştur."
-        if ozet:
-            sistem_prompt += " Metni özetle ve ana noktaları vurgula."
-
+        # Kendi fonksiyonunu kullan
+        sistem_prompt = create_prompt(dil_mesajlari, tarz_mesajlari, dil, tarz, baslik, ozet)
         mesajlar = [
             {"role": "system", "content": sistem_prompt},
             {"role": "user", "content": metin}
         ]
-
         try:
             cevap = client.chat.completions.create(
                 model="gpt-4o",
