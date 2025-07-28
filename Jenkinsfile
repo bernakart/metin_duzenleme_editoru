@@ -35,18 +35,22 @@ pipeline {
 
         stage('Docker Stop (Temizlik)') {
             steps {
-                // 8501 portunu kullanan tüm containerları durdur
+                // Aynı image'dan çalışanları durdur
                 sh '''
-                  for id in $(docker ps -q --filter "publish=8501"); do
-                    docker stop $id;
-                  done
+                  docker ps --filter "ancestor=$IMAGE_NAME" -q | xargs -r docker stop || true
                 '''
             }
         }
 
-        stage('Docker Run (Opsiyonel)') {
+        stage('Docker Run') {
             steps {
                 sh 'docker run -d --rm --env-file .env -p 8501:8501 $IMAGE_NAME'
+            }
+        }
+
+        stage('Cleanup') {
+            steps {
+                sh 'rm -f .env'
             }
         }
     }
